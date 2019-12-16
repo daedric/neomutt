@@ -25,6 +25,7 @@
 
 struct NotifyCallback;
 
+int sb_insertion_observer(struct NotifyCallback *nc);
 int sb_observer(struct NotifyCallback *nc);
 
 #endif /* MUTT_SIDEBAR_OBSERVER_H */

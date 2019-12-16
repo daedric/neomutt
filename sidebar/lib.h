@@ -27,8 +27,6 @@
 
 #include <stdbool.h>
 #include "mutt/lib.h"
-#include "gui/lib.h"
-#include "mutt_commands.h"
 
 struct Mailbox;
 struct MuttWindow;
@@ -89,12 +87,12 @@ void            sb_change_mailbox  (int op);
 bool            select_next        (void);
 void            sb_draw            (struct MuttWindow *win);
 struct Mailbox *sb_get_highlight   (void);
+void            sb_notify_mailbox  (struct Mailbox *m, bool created);
 void            sb_set_open_mailbox(struct Mailbox *m);
-int             sb_observer        (struct NotifyCallback *nc);
+void            sb_win_init        (struct MuttWindow *dlg);
+void            sb_win_shutdown    (struct MuttWindow *dlg);
 
 enum CommandResult sb_parse_unwhitelist(struct Buffer *buf, struct Buffer *s, intptr_t data, struct Buffer *err);
 enum CommandResult sb_parse_whitelist  (struct Buffer *buf, struct Buffer *s, intptr_t data, struct Buffer *err);
-
-void sb_notify_mailbox(struct Mailbox *m, bool created);
 
 #endif /* MUTT_SIDEBAR_H */
