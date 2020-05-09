@@ -37,6 +37,7 @@
 #include "globals.h"
 #include "init.h"
 #include "mutt_menu.h"
+#include "wdata.h"
 
 struct Command;
 

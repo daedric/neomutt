@@ -27,6 +27,7 @@
 
 #include <stdbool.h>
 #include "mutt/lib.h"
+#include "gui/lib.h"
 #include "mutt_commands.h"
 
 struct Mailbox;
@@ -52,15 +53,6 @@ extern short C_SidebarWidth;
 
 extern struct ListHead SidebarWhitelist;
 
-extern int EntryCount;
-extern int EntryLen;
-extern struct SbEntry **Entries;
-
-extern int TopIndex;
-extern int OpnIndex;
-extern int HilIndex;
-extern int BotIndex;
-
 void sb_init    (void);
 void sb_shutdown(void);
 
@@ -72,6 +64,7 @@ struct SbEntry
   char box[256];           ///< Formatted Mailbox name
   struct Mailbox *mailbox; ///< Mailbox this represents
   bool is_hidden;          ///< Don't show, e.g. $sidebar_new_mail_only
+  enum ColorId color;      ///< Colour to use
 };
 
 /**
@@ -84,12 +77,12 @@ enum DivType
   SB_DIV_UTF8,  ///< A unicode line-drawing character
 };
 
-void            sb_change_mailbox  (int op);
-bool            select_next        (void);
+void            sb_change_mailbox  (struct MuttWindow *win, int op);
+bool            select_next        (struct SidebarWindowData *wdata);
 void            sb_draw            (struct MuttWindow *win);
-struct Mailbox *sb_get_highlight   (void);
-void            sb_notify_mailbox  (struct Mailbox *m, bool created);
-void            sb_set_open_mailbox(struct Mailbox *m);
+struct Mailbox *sb_get_highlight   (struct MuttWindow *win);
+void            sb_notify_mailbox  (struct MuttWindow *win, struct Mailbox *m, bool created);
+void            sb_set_open_mailbox(struct MuttWindow *win, struct Mailbox *m);
 void            sb_win_init        (struct MuttWindow *dlg);
 void            sb_win_shutdown    (struct MuttWindow *dlg);
 
