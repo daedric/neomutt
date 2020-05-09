@@ -27,13 +27,13 @@
  */
 
 #include "config.h"
-#include "mutt/lib.h"
+#include <stdbool.h>
 #include "core/lib.h"
-#include "gui/lib.h"
-#include "index.h"
-#include "mutt_menu.h"
 #include "opcodes.h"
 #include "wdata.h"
+#include "sidebar/lib.h"
+
+struct MuttWindow;
 
 /**
  * select_next - Selects the next unhidden mailbox
@@ -231,7 +231,7 @@ static bool select_last(struct SidebarWindowData *wdata)
 /**
  * sb_change_mailbox - Perform a Sidebar function
  * @param win Sidebar Window
- * @param op  Operation to perform, e.g. #OP_SIDEBAR_NEXT_NEW
+ * @param op  Operation to perform, e.g. OP_SIDEBAR_NEXT_NEW
  */
 void sb_change_mailbox(struct MuttWindow *win, int op)
 {

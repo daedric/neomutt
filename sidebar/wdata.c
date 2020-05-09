@@ -27,12 +27,10 @@
  */
 
 #include "config.h"
+#include <stddef.h>
 #include "mutt/lib.h"
-#include "core/lib.h"
 #include "gui/lib.h"
 #include "wdata.h"
-
-struct MuttWindow;
 
 /**
  * sb_wdata_new - Create new Window data for the Sidebar

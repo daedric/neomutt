@@ -25,6 +25,8 @@
 
 #include "sidebar/lib.h"
 
+struct MuttWindow;
+
 /**
  * struct SidebarWindowData - Sidebar private Window data - @extends MuttWindow
  */
