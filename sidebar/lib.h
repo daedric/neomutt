@@ -62,6 +62,9 @@ extern int OpnIndex;
 extern int HilIndex;
 extern int BotIndex;
 
+void sb_init    (void);
+void sb_shutdown(void);
+
 /**
  * struct SbEntry - Info about folders in the sidebar
  */
