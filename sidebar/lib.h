@@ -5,7 +5,7 @@
  * @authors
  * Copyright (C) 2004 Justin Hibbits <jrh29@po.cwru.edu>
  * Copyright (C) 2004 Thomer M. Gil <mutt@thomer.com>
- * Copyright (C) 2015-2016 Richard Russon <rich@flatcap.org>
+ * Copyright (C) 2015-2020 Richard Russon <rich@flatcap.org>
  *
  * @copyright
  * This program is free software: you can redistribute it and/or modify it under
@@ -26,10 +26,14 @@
 #define MUTT_SIDEBAR_H
 
 #include <stdbool.h>
+#include "mutt/lib.h"
+#include "gui/lib.h"
+#include "mutt_commands.h"
 
 struct Mailbox;
 struct MuttWindow;
 struct NotifyCallback;
+struct SidebarWindowData;
 
 /* These Config Variables are only used in sidebar.c */
 extern short C_SidebarComponentDepth;
@@ -47,11 +51,47 @@ extern short C_SidebarSortMethod;
 extern bool  C_SidebarVisible;
 extern short C_SidebarWidth;
 
+extern struct ListHead SidebarWhitelist;
+
+extern int EntryCount;
+extern int EntryLen;
+extern struct SbEntry **Entries;
+
+extern int TopIndex;
+extern int OpnIndex;
+extern int HilIndex;
+extern int BotIndex;
+
+/**
+ * struct SbEntry - Info about folders in the sidebar
+ */
+struct SbEntry
+{
+  char box[256];           ///< Formatted Mailbox name
+  struct Mailbox *mailbox; ///< Mailbox this represents
+  bool is_hidden;          ///< Don't show, e.g. $sidebar_new_mail_only
+};
+
+/**
+ * enum DivType - Source of the sidebar divider character
+ */
+enum DivType
+{
+  SB_DIV_USER,  ///< User configured using $sidebar_divider_char
+  SB_DIV_ASCII, ///< An ASCII vertical bar (pipe)
+  SB_DIV_UTF8,  ///< A unicode line-drawing character
+};
+
 void            sb_change_mailbox  (int op);
+bool            select_next        (void);
 void            sb_draw            (struct MuttWindow *win);
 struct Mailbox *sb_get_highlight   (void);
-void            sb_notify_mailbox  (struct Mailbox *m, bool created);
-int             sb_observer        (struct NotifyCallback *nc);
 void            sb_set_open_mailbox(struct Mailbox *m);
+int             sb_observer        (struct NotifyCallback *nc);
+
+enum CommandResult sb_parse_unwhitelist(struct Buffer *buf, struct Buffer *s, intptr_t data, struct Buffer *err);
+enum CommandResult sb_parse_whitelist  (struct Buffer *buf, struct Buffer *s, intptr_t data, struct Buffer *err);
+
+void sb_notify_mailbox(struct Mailbox *m, bool created);
 
 #endif /* MUTT_SIDEBAR_H */
