@@ -1332,33 +1332,18 @@ enum CommandResult parse_set(struct Buffer *buf, struct Buffer *s,
             mutt_buffer_addstr(buf, mutt_b2s(&scratch));
             mutt_buffer_dealloc(&scratch);
           }
-          if (increment || decrement)
+          if (increment)
           {
-            if (increment)
-            {
-              rc = cs_subset_he_string_plus_equals(NeoMutt->sub, he, buf->data, err);
-            }
-            else
-            {
-              rc = cs_subset_he_string_minus_equals(NeoMutt->sub, he, buf->data, err);
-            }
-
-            int add;
-            int initval = 0;
-
-            mutt_str_atoi(mutt_str_strdup(buf->data), &add);
-
-            rc = cs_subset_he_string_get(NeoMutt->sub, he, buf);
-            mutt_str_atoi(mutt_str_strdup(buf->data), &initval);
-
-            if (decrement)
-              add *= -1;
-
-            mutt_buffer_reset(buf);
-            mutt_buffer_printf(buf, "%d", initval + add);
+            rc = cs_subset_he_string_plus_equals(NeoMutt->sub, he, buf->data, err);
           }
-
-          rc = cs_subset_he_string_set(NeoMutt->sub, he, buf->data, err);
+          else if (decrement)
+          {
+            rc = cs_subset_he_string_minus_equals(NeoMutt->sub, he, buf->data, err);
+          }
+          else
+          {
+            rc = cs_subset_he_string_set(NeoMutt->sub, he, buf->data, err);
+          }
           if (CSR_RESULT(rc) != CSR_SUCCESS)
             return MUTT_CMD_ERROR;
         }
