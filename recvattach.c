@@ -1475,6 +1475,7 @@ void mutt_view_attachments(struct Email *e)
   {
     if (op == OP_NULL)
       op = mutt_menu_loop(menu);
+    window_redraw(dlg);
     if (!Context)
       return;
     switch (op)

@@ -1044,7 +1044,26 @@ void sb_notify_mailbox(struct MuttWindow *win, struct SidebarWindowData *wdata,
       wdata->entries[del_index] = wdata->entries[del_index + 1];
   }
 
-  mutt_menu_set_current_redraw(REDRAW_SIDEBAR);
+  win->actions |= WA_RECALC;
+}
+
+/**
+ * sb_recalc - Recalculate the Sidebar data - Implements MuttWindow::recalc()
+ */
+int sb_recalc(struct MuttWindow *win, bool all)
+{
+  mutt_debug(LL_DEBUG1, "SIDEBAR RECALC\n");
+  return -1;
+}
+
+/**
+ * sb_repaint - Repaint the Sidebar - Implements MuttWindow::repaint()
+ */
+int sb_repaint(struct MuttWindow *win, bool all)
+{
+  mutt_debug(LL_DEBUG1, "SIDEBAR REPAINT\n");
+  sb_draw(win);
+  return -1;
 }
 
 /**
@@ -1121,6 +1140,8 @@ void sb_win_init(struct MuttWindow *dlg)
   win_sidebar->state.visible = C_SidebarVisible && (C_SidebarWidth > 0);
   win_sidebar->wdata = sb_wdata_new();
   win_sidebar->wdata_free = sb_wdata_free;
+  win_sidebar->recalc = sb_recalc;
+  win_sidebar->repaint = sb_repaint;
 
   if (C_SidebarOnRight)
   {

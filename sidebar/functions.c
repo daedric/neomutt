@@ -282,5 +282,6 @@ void sb_change_mailbox(struct MuttWindow *win, int op)
     default:
       return;
   }
-  mutt_menu_set_current_redraw(REDRAW_SIDEBAR);
+
+  win->actions |= WA_RECALC;
 }
