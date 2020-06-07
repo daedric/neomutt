@@ -110,6 +110,8 @@ options {
   with-zstd:path            => "Location of Zstandard"
 # System
   with-sysroot:path         => "Target system root"
+# Misc
+  cflags-record=1           => "Disable recording compiler flags in the output of neomutt -v"
 # Testing
   testing=0                 => "Enable Unit Testing"
   coverage=0                => "Enable Coverage Testing"
@@ -138,7 +140,7 @@ if {1} {
     debug-parse-test debug-window doc everything fmemopen full-doc gdbm gnutls
     gpgme gss homespool idn idn2 inotify kyotocabinet lmdb locales-fix lua lz4
     mixmaster nls notmuch pcre2 pgp pkgconf qdbm rocksdb sasl smime sqlite ssl
-    testing tdb tokyocabinet zlib zstd
+    testing tdb tokyocabinet zlib zstd cflags-record
   } {
     define want-$opt [opt-bool $opt]
   }
@@ -666,6 +668,12 @@ if {[get-define want-zlib]} {
     user-error "Unable to find zlib"
   }
   define USE_ZLIB
+}
+
+###############################################################################
+# record-cflags in version output
+if {![get-define want-cflags-record]} {
+  define DISABLE_WRITING_CFLAGS 1
 }
 
 ###############################################################################

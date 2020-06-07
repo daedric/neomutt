@@ -505,8 +505,10 @@ void print_version(FILE *fp)
   rstrip_in_place((char *) configure_options);
   fprintf(fp, "\n\nConfigure options: %s\n", (char *) configure_options);
 
+#ifndef DISABLE_WRITING_CFLAGS
   rstrip_in_place((char *) cc_cflags);
   fprintf(fp, "\nCompilation CFLAGS: %s\n", (char *) cc_cflags);
+#endif
 
   fprintf(fp, "\n%s\n", _("Default options:"));
   print_compile_options(comp_opts_default, fp);
