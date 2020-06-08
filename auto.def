@@ -111,7 +111,7 @@ options {
 # System
   with-sysroot:path         => "Target system root"
 # Misc
-  cflags-record=1           => "Disable recording compiler flags in the output of neomutt -v"
+  include-path-in-cflags=1  => "Remove include paths from CFLAGS in the output of neomutt -v"
 # Testing
   testing=0                 => "Enable Unit Testing"
   coverage=0                => "Enable Coverage Testing"
@@ -138,9 +138,9 @@ if {1} {
   foreach opt {
     autocrypt bdb coverage debug-backtrace debug-graphviz debug-notify
     debug-parse-test debug-window doc everything fmemopen full-doc gdbm gnutls
-    gpgme gss homespool idn idn2 inotify kyotocabinet lmdb locales-fix lua lz4
-    mixmaster nls notmuch pcre2 pgp pkgconf qdbm rocksdb sasl smime sqlite ssl
-    testing tdb tokyocabinet zlib zstd cflags-record
+    gpgme gss homespool idn idn2 include-path-in-cflags inotify kyotocabinet
+    lmdb locales-fix lua lz4 mixmaster nls notmuch pcre2 pgp pkgconf qdbm
+    rocksdb sasl smime sqlite ssl testing tdb tokyocabinet zlib zstd 
   } {
     define want-$opt [opt-bool $opt]
   }
@@ -1214,7 +1214,7 @@ if {[get-define want-debug-window]} {
 # Generate conststrings.c
 proc filter-cflags {cflags} {
   expr {
-    [get-define want-cflags-record]
+    [get-define want-include-path-in-cflags]
     ? $cflags
     : [lmap x $cflags {
         expr {[string equal -length 2 $x {-I}] ? [continue] : $x}}]
