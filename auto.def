@@ -1212,17 +1212,14 @@ if {[get-define want-debug-window]} {
 
 ###############################################################################
 # Generate conststrings.c
-proc filter-cflags {cflags} {
-  expr {
-    [get-define want-include-path-in-cflags]
-    ? $cflags
-    : [lmap x $cflags {
-        expr {[string equal -length 2 $x {-I}] ? [continue] : $x}}]
-  }
-}
-
 set conststrings "\
-  unsigned char cc_cflags\[\] = {[text2c [filter-cflags [get-define CFLAGS]]]};\n\
+  unsigned char cc_cflags\[\] = {[text2c [expr {
+    [get-define want-include-path-in-cflags]
+    ? [get-define CFLAGS]
+    : [lmap x [get-define CFLAGS] {
+        expr {[string equal -length 2 $x {-I}] ? [continue] : $x}
+      }]
+  }]]};\n\
   unsigned char configure_options\[\] = {[text2c $conf_options]};\n"
 if {[catch {set fd [open conststrings.c w]
             puts $fd $conststrings
