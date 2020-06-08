@@ -671,12 +671,6 @@ if {[get-define want-zlib]} {
 }
 
 ###############################################################################
-# record-cflags in version output
-if {![get-define want-cflags-record]} {
-  define DISABLE_WRITING_CFLAGS 1
-}
-
-###############################################################################
 # fmemopen(3)
 if {[get-define want-fmemopen]} {
   if {![cc-check-functions fmemopen]} {
@@ -1218,8 +1212,17 @@ if {[get-define want-debug-window]} {
 
 ###############################################################################
 # Generate conststrings.c
+proc filter-cflags {cflags} {
+  expr {
+    [get-define want-cflags-record]
+    ? $cflags
+    : [lmap x $cflags {
+        expr {[string equal -length 2 $x {-I}] ? [continue] : $x}}]
+  }
+}
+
 set conststrings "\
-  unsigned char cc_cflags\[\] = {[text2c [get-define CFLAGS]]};\n\
+  unsigned char cc_cflags\[\] = {[text2c [filter-cflags [get-define CFLAGS]]]};\n\
   unsigned char configure_options\[\] = {[text2c $conf_options]};\n"
 if {[catch {set fd [open conststrings.c w]
             puts $fd $conststrings
