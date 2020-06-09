@@ -357,6 +357,155 @@ static bool test_native_get(struct ConfigSet *cs, struct Buffer *err)
   return true;
 }
 
+static bool test_string_plus_equals(struct ConfigSet *cs, struct Buffer *err)
+{
+  log_line(__func__);
+
+  const char *valid[] = { "-123", "0", "-42", "456" };
+  int numbers[] = { -165, -42, -84, 414 };
+  const char *invalid[] = { "-33183", "111132868", "junk", "", NULL }; // I'm not 100% sure what to do here
+  const char *name = "Damson";
+
+  int rc;
+  for (unsigned int i = 0; i < mutt_array_size(valid); i++)
+  {
+    VarDamson = -42;
+
+    TEST_MSG("Increasing %s with initial value %d by %s\n", name, VarDamson, valid[i]);
+    mutt_buffer_reset(err);
+    rc = cs_str_string_plus_equals(cs, name, valid[i], err);
+    if (!TEST_CHECK(CSR_RESULT(rc) == CSR_SUCCESS))
+    {
+      TEST_MSG("%s\n", err->data);
+      return false;
+    }
+
+    if (rc & CSR_SUC_NO_CHANGE)
+    {
+      TEST_MSG("Value of %s wasn't changed\n", name);
+      continue;
+    }
+
+    if (!TEST_CHECK(VarDamson == numbers[i]))
+    {
+      TEST_MSG("Value of %s wasn't changed\n", name);
+      return false;
+    }
+    TEST_MSG("%s = %d, set by '%s'\n", name, VarDamson, valid[i]);
+    short_line();
+  }
+
+  for (unsigned int i = 0; i < mutt_array_size(invalid); i++)
+  {
+    TEST_MSG("Increasing %s with initial value %d by %s\n", name, VarDamson, NONULL(invalid[i]));
+    mutt_buffer_reset(err);
+    rc = cs_str_string_plus_equals(cs, name, invalid[i], err);
+    if (TEST_CHECK(CSR_RESULT(rc) != CSR_SUCCESS))
+    {
+      TEST_MSG("Expected error: %s\n", err->data);
+    }
+    else
+    {
+      TEST_MSG("%s = %d, set by '%s'\n", name, VarDamson, invalid[i]);
+      TEST_MSG("This test should have failed\n");
+      return false;
+    }
+    short_line();
+  }
+
+  name = "Elderberry";
+  mutt_buffer_reset(err);
+  TEST_MSG("Increasing %s by %s\n", name, "-42");
+  rc = cs_str_string_plus_equals(cs, name, "-42", err);
+  if (TEST_CHECK(CSR_RESULT(rc) != CSR_SUCCESS))
+  {
+    TEST_MSG("Expected error: %s\n", err->data);
+  }
+  else
+  {
+    TEST_MSG("This test should have failed\n");
+    return false;
+  }
+
+  log_line(__func__);
+  return true;
+}
+
+static bool test_string_minus_equals(struct ConfigSet *cs, struct Buffer *err)
+{
+  log_line(__func__);
+
+  const char *valid[] = { "-123", "0", "-42", "456" };
+  int numbers[] = { 81, -42, 0, -498 };
+  const char *invalid[] = { "32271", "-1844674407370955161000005" "junk", "", NULL }; // I'm not 100% sure what to do here
+  const char *name = "Damson";
+
+  int rc;
+  for (unsigned int i = 0; i < mutt_array_size(valid); i++)
+  {
+    VarDamson = -42;
+
+    TEST_MSG("Decreasing %s with initial value %d by %s\n", name, VarDamson, valid[i]);
+    mutt_buffer_reset(err);
+    rc = cs_str_string_minus_equals(cs, name, valid[i], err);
+    if (!TEST_CHECK(CSR_RESULT(rc) == CSR_SUCCESS))
+    {
+      TEST_MSG("%s\n", err->data);
+      return false;
+    }
+
+    if (rc & CSR_SUC_NO_CHANGE)
+    {
+      TEST_MSG("Value of %s wasn't changed\n", name);
+      continue;
+    }
+
+    if (!TEST_CHECK(VarDamson == numbers[i]))
+    {
+      TEST_MSG("Value of %s wasn't changed\n", name);
+      return false;
+    }
+    TEST_MSG("%s = %d, set by '%s'\n", name, VarDamson, valid[i]);
+    short_line();
+  }
+
+  for (unsigned int i = 0; i < mutt_array_size(invalid); i++)
+  {
+    TEST_MSG("Decreasing %s with initial value %d by %s\n", name, VarDamson, NONULL(invalid[i]));
+    mutt_buffer_reset(err);
+    rc = cs_str_string_minus_equals(cs, name, invalid[i], err);
+    if (TEST_CHECK(CSR_RESULT(rc) != CSR_SUCCESS))
+    {
+      TEST_MSG("Expected error: %s\n", err->data);
+    }
+    else
+    {
+      TEST_MSG("%s = %d, decreased by '%s'\n", name, VarDamson, invalid[i]);
+      TEST_MSG("This test should have failed\n");
+      return false;
+    }
+    short_line();
+  }
+
+  name = "Elderberry";
+  mutt_buffer_reset(err);
+  TEST_MSG("Increasing %s by %s\n", name, "42");
+  rc = cs_str_string_minus_equals(cs, name, "42", err);
+  if (TEST_CHECK(CSR_RESULT(rc) != CSR_SUCCESS))
+  {
+    TEST_MSG("Expected error: %s\n", err->data);
+  }
+  else
+  {
+    TEST_MSG("This test should have failed\n");
+    return false;
+  }
+
+  log_line(__func__);
+  return true;
+}
+
+
 static bool test_reset(struct ConfigSet *cs, struct Buffer *err)
 {
   log_line(__func__);
@@ -638,6 +787,8 @@ void test_config_number(void)
   TEST_CHECK(test_initial_values(cs, &err));
   TEST_CHECK(test_string_set(cs, &err));
   TEST_CHECK(test_string_get(cs, &err));
+  TEST_CHECK(test_string_plus_equals(cs, &err));
+  TEST_CHECK(test_string_minus_equals(cs, &err));
   TEST_CHECK(test_native_set(cs, &err));
   TEST_CHECK(test_native_get(cs, &err));
   TEST_CHECK(test_reset(cs, &err));
