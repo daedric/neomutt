@@ -1122,7 +1122,7 @@ enum CommandResult parse_set(struct Buffer *buf, struct Buffer *s,
     }
 
     /* get the variable name */
-    mutt_extract_token(buf, s, MUTT_TOKEN_EQUAL | MUTT_TOKEN_QUESTION);
+    mutt_extract_token(buf, s, MUTT_TOKEN_EQUAL | MUTT_TOKEN_QUESTION | MUTT_TOKEN_PLUS | MUTT_TOKEN_MINUS);
 
     bool bq = false;
     bool equals = false;
@@ -1296,12 +1296,12 @@ enum CommandResult parse_set(struct Buffer *buf, struct Buffer *s,
       {
         // mutt_buffer_printf(err, "ACT11 set variable %s to ", buf->data);
         const char *name = NULL;
-        if (my)
+        if (my && !(increment || decrement))
         {
           name = mutt_str_strdup(buf->data);
         }
         mutt_extract_token(buf, s, MUTT_TOKEN_BACKTICK_VARS);
-        if (my)
+        if (my && !(increment || decrement))
         {
           myvar_set(name, buf->data);
           FREE(&name);
