@@ -484,6 +484,20 @@ $(PWD)/sidebar:
 @endif
 
 ###############################################################################
+# libpreview
+LIBPREVIEW=	libpreview.a
+LIBPREVIEWOBJS=	preview/preview.o preview/commands.o preview/functions.o \
+		preview/observer.o preview/wdata.o
+CLEANFILES+=	$(LIBPREVIEW) $(LIBPREVIEWOBJS)
+ALLOBJS+=	$(LIBPREVIEWOBJS)
+
+$(LIBPREVIEW): $(PWD)/preview $(LIBPREVIEWOBJS)
+	$(AR) cr $@ $(LIBPREVIEWOBJS)
+	$(RANLIB) $@
+$(PWD)/preview:
+	$(MKDIR_P) $(PWD)/preview
+
+###############################################################################
 # libstore
 @if HAVE_BDB
 LIBSTOREOBJS+=	store/bdb.o
@@ -548,9 +562,9 @@ $(ALLOBJS):
 MUTTLIBS+=	$(LIBAUTOCRYPT) $(LIBPOP) $(LIBNNTP) $(LIBCOMPMBOX) \
 		$(LIBSTORE) $(LIBGUI) $(LIBDEBUG) $(LIBMBOX) $(LIBNOTMUCH) \
 		$(LIBMAILDIR) $(LIBNCRYPT) $(LIBIMAP) $(LIBCONN) $(LIBHCACHE) \
-		$(LIBCOMPRESS) $(LIBSIDEBAR) $(LIBBCACHE) $(LIBHISTORY) \
-		$(LIBALIAS) $(LIBCORE) $(LIBCONFIG) $(LIBEMAIL) $(LIBADDRESS) \
-		$(LIBMUTT)
+		$(LIBCOMPRESS) $(LIBSIDEBAR) $(LIBPREVIEW) $(LIBBCACHE) \
+		$(LIBHISTORY) $(LIBALIAS) $(LIBCORE) $(LIBCONFIG) $(LIBEMAIL) \
+		$(LIBADDRESS) $(LIBMUTT)
 
 # neomutt
 $(NEOMUTT): $(GENERATED) $(NEOMUTTOBJS) $(MUTTLIBS)
